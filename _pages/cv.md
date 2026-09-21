@@ -1,64 +1,57 @@
 ---
 layout: archive
-title: "CV"
+title: "Curriculum Vitae"
 permalink: /cv/
 author_profile: true
 redirect_from:
   - /resume
 ---
 
-{% include base_path %}
+## Education
 
-Education
-======
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
-* M.S. in Jekyll, GitHub University, 2014
-* B.S. in GitHub, GitHub University, 2012
+- **Ph.D. Candidate, Aerospace Propulsion Theory and Engineering**, Beihang University, 2023–present<br>
+  Integrated M.S.–Ph.D. program; expected completion: June 2027.
+- **Graduate Study, Aerospace Propulsion Theory and Engineering**, Beihang University, 2022–2023<br>
+  Recommended admission without examination.
+- **B.Eng., Aircraft Propulsion Engineering (Aerospace)**, Beihang University, 2018–2022.
 
-Work experience
-======
-* Spring 2024: Academic Pages Collaborator
-  * GitHub University
-  * Duties includes: Updates and improvements to template
-  * Supervisor: The Users
+## Research experience
 
-* Fall 2015: Research Assistant
-  * GitHub University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
+### Beihang University
+Doctoral research in computational quantum chemistry, combustion kinetics, and scientific machine learning. Current work includes neural quantum states, sparse reduction of chemical reaction mechanisms, physics-informed field reconstruction, and metal-particle combustion.
 
-* Summer 2015: Research Assistant
-  * GitHub University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
-  
-Skills
-======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+### ByteDance Seed AI for Science — Quantum Chemistry Team
+Research intern, 2025–present.
 
-Publications
-======
-  <ul>{% for post in site.publications reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks reversed %}
-    {% include archive-single-talk-cv.html  %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Service and leadership
-======
-* Currently signed in to 43 different slack teams
+## Publications
+
+Selected publications are listed on the [Publications](/publications/) page and reproduced below.
+
+<ul>{% for post in site.publications reversed %}
+  {% include archive-single-cv.html %}
+{% endfor %}</ul>
+
+## Teaching
+
+- Teaching Assistant, *Engineering Thermodynamics and Heat Transfer A*, Beihang University, 2024.
+
+## Skills
+
+- **Programming:** Python, C, C++, MATLAB, Fortran, Git.
+- **Machine learning and scientific computing:** neural quantum states, scientific machine learning, sparse learning.
+- **Quantum chemistry:** Gaussian, Molpro, MESS, PySCF.
+- **Engineering tools:** SolidWorks, AutoCAD, LabVIEW.
+- **Languages:** Chinese (native), English (CET-6; professional working proficiency).
+
+## Selected honors
+
+- First Prize, National Zhou Peiyuan College Mechanics Competition, 2021.
+- First Prize, National College Mathematics Competition, 2020.
+- First Prize, Anhui Division of the National High School Physics Competition, 2017.
+- First Prize, Beihang University Graduate Academic Scholarship, 2025.
+- Beihang University Doctoral Freshman Academic Scholarship, 2023.
+
+## Service and activities
+
+- Sports Department, Student Union, School of Astronautics, Beihang University, 2019–2021.
+- Life Committee Member, Class 181515, School of Astronautics, Beihang University, 2019–2022.

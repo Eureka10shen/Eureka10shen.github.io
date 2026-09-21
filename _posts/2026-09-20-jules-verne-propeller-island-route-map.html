@@ -1,0 +1,1452 @@
+---
+layout: none
+title: "Jules Verne's L'Île à hélice: The Route of Standard Island"
+date: 2026-09-20 19:39:50 +0800
+categories:
+  - literature
+  - interactive-map
+tags:
+  - Jules Verne
+  - L'Île à hélice
+  - Interactive Map
+excerpt: "An interactive bilingual map tracing Standard Island's voyage across the Pacific in Jules Verne's L'Île à hélice."
+permalink: /blog/jules-verne-propeller-island-route-map/
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>凡尔纳《L'Île à hélice》标准岛太平洋航行轨迹图（中文版）</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Vintage and Modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Noto Serif SC"', 'serif'],
+            vintage: ['"Cinzel"', '"Noto Serif SC"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            parchment: '#f5ecd7',
+            parchmentDark: '#e5d7b7',
+            ink: '#2b2318',
+            oceanSea: '#dbece5',
+            landGreen: '#d2dfcb',
+            accentRed: '#a83226',
+            brassGold: '#c59b27'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom parchment texture pattern and map styling */
+    .bg-parchment-texture {
+      background-color: #f7f0df;
+      background-image: radial-gradient(#e4d4b3 1px, transparent 1px), radial-gradient(#dbcaa5 1px, #f7f0df 1px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #ebdcc0;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #bfa980;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-[#241f1a] text-[#3d3224] min-h-screen flex flex-col font-sans overflow-x-hidden">
+
+  <header class="bg-[#1a1613] border-b border-[#3d3429] text-[#e8dfcf] px-4 sm:px-8 py-3.5 flex flex-wrap justify-between items-center shadow-lg">
+    <div class="flex items-center space-x-3">
+      <span class="text-2xl text-amber-500">⚓</span>
+      <div>
+        <h1 class="text-lg sm:text-xl font-vintage font-bold tracking-wider text-amber-100 flex items-center gap-2">
+          凡尔纳《L'Île à hélice》标准岛航迹图
+          <span class="text-xs font-sans px-2 py-0.5 rounded bg-amber-900/60 text-amber-300 border border-amber-700/50">1895 原版中译考证</span>
+        </h1>
+        <p class="text-xs text-stone-400">L'Île à hélice — Itinéraire de Standard-Island (Grand Océan Pacifique)</p>
+      </div>
+    </div>
+
+    <!-- Quick action controls -->
+    <div class="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
+      <div class="flex bg-stone-900/80 p-1 rounded-lg border border-stone-700 text-xs">
+        <button id="btnViewChinese" class="px-3 py-1.5 rounded font-medium transition bg-amber-700 text-white shadow">中文纯享</button>
+        <button id="btnViewBilingual" class="px-3 py-1.5 rounded font-medium transition text-stone-300 hover:text-white">中法双语</button>
+      </div>
+      <button id="btnDownloadMap" class="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-emerald-100 text-xs font-semibold rounded-lg shadow border border-emerald-600/50 transition">
+        <span>📥</span> 导出高清中文地图 (PNG)
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 flex flex-col lg:flex-row p-3 sm:p-5 gap-4 max-w-[1700px] w-full mx-auto">
+    
+    <!-- Left / Center: The Antique Map Canvas Container -->
+    <div class="flex-1 flex flex-col bg-[#e7d8bc] rounded-xl border-4 border-[#52412e] shadow-2xl overflow-hidden relative">
+      <!-- Toolbar over map -->
+      <div class="bg-[#dccab0] border-b border-[#bfa989] px-4 py-2 flex flex-wrap justify-between items-center text-xs text-[#423422] font-serif">
+        <div class="flex items-center space-x-4">
+          <span class="font-bold flex items-center gap-1">🗺️ 太平洋全图坐标网：东经150° - 西经120°</span>
+          <span class="hidden sm:inline text-stone-600">|</span>
+          <span class="hidden sm:inline text-stone-700">红点为全书28章关键事件与停靠站（可悬停/点击）</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="btnZoomIn" class="w-7 h-7 bg-[#f3e7ce] hover:bg-white border border-[#9b8363] rounded font-bold text-sm shadow">＋</button>
+          <button id="btnZoomOut" class="w-7 h-7 bg-[#f3e7ce] hover:bg-white border border-[#9b8363] rounded font-bold text-sm shadow">－</button>
+          <button id="btnResetView" class="px-2 h-7 bg-[#f3e7ce] hover:bg-white border border-[#9b8363] rounded text-xs font-medium shadow">重置视角</button>
+        </div>
+      </div>
+
+      <!-- Canvas viewport -->
+      <div class="relative flex-1 w-full h-[620px] sm:h-[720px] overflow-hidden bg-[#dbece5] cursor-grab active:cursor-grabbing" id="canvasContainer">
+        <canvas id="mapCanvas" class="w-full h-full block"></canvas>
+        
+        <!-- Legend Overlay in map corner -->
+        <div class="absolute bottom-4 right-4 bg-[#f8f1e0]/90 backdrop-blur-sm border-2 border-[#54432f] p-3 rounded-lg shadow-xl font-serif max-w-[240px] pointer-events-none">
+          <div class="text-center font-vintage font-bold text-sm tracking-widest border-b border-[#a89376] pb-1 mb-2 text-[#241a0e]">
+            大 洋 洲<br><span class="text-[10px] text-stone-500 font-sans">OCÉANIE</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs mb-1">
+            <span class="inline-block w-6 h-1 bg-[#881c1c] rounded"></span>
+            <span class="font-semibold text-[#691414]">标准岛航线 (Itinéraire)</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs mb-1">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-600 border border-black"></span>
+            <span class="text-stone-800">全书28章对应地点与航段</span>
+          </div>
+          <div class="text-[10px] text-stone-600 mt-1 italic leading-tight">
+            1895年法文原版雕刻：E. Morieu<br>28章全程中法考据：Jules Verne 原著
+          </div>
+        </div>
+
+        <!-- Floating chapter tooltip (dynamic) -->
+        <div id="mapTooltip" class="absolute hidden bg-[#1d1610]/95 text-stone-200 text-xs p-3 rounded-lg border border-amber-500/60 shadow-2xl pointer-events-none max-w-xs z-30 transition-opacity">
+          <div id="tooltipTitle" class="font-bold text-amber-400 font-serif text-sm mb-1"></div>
+          <div id="tooltipSub" class="text-[11px] text-stone-400 mb-1.5 italic"></div>
+          <div id="tooltipDesc" class="text-stone-300 leading-snug"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full lg:w-[470px] flex flex-col gap-3">
+      
+      <!-- Tab Controls -->
+      <div class="flex bg-[#332b23] p-1 rounded-xl border border-[#4d4034] text-xs font-medium text-stone-300">
+        <button id="tabBtnChapters" class="flex-1 py-2 rounded-lg bg-amber-700 text-white font-semibold shadow">
+          📖 28章全本航迹溯源
+        </button>
+        <button id="tabBtnGazetteer" class="flex-1 py-2 rounded-lg text-stone-300 hover:text-white">
+          📜 全本地名中法对照表
+        </button>
+        <button id="tabBtnAiPrompt" class="flex-1 py-2 rounded-lg text-stone-300 hover:text-white">
+          ✨ PS/AI 修图Prompt
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Novel Chapters Route Walkthrough -->
+      <div id="tabChapters" class="bg-[#fbf4e4] rounded-xl border-2 border-[#b59f7d] p-3 sm:p-4 shadow-xl flex-1 flex flex-col max-h-[720px]">
+        <div class="mb-2 border-b border-[#d8c3a3] pb-2">
+          <div class="flex justify-between items-center mb-1">
+            <h2 class="font-serif font-bold text-base text-[#382b19]">28章全轨迹逐章考证</h2>
+            <span class="text-xs bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-sans">点击卡片可联动定位</span>
+          </div>
+          <!-- Part filter buttons -->
+          <div class="flex gap-1.5 mt-2 text-xs">
+            <button id="filterPartAll" class="px-2.5 py-1 rounded bg-amber-800 text-white font-medium">全部 28章</button>
+            <button id="filterPart1" class="px-2.5 py-1 rounded bg-[#ecdcc0] text-[#4d3a24] hover:bg-amber-200 font-medium">第一部 (1~14章)</button>
+            <button id="filterPart2" class="px-2.5 py-1 rounded bg-[#ecdcc0] text-[#4d3a24] hover:bg-amber-200 font-medium">第二部 (15~28章)</button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-1 text-xs" id="chapterListContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Full Bilingual Gazetteer (Place Names) -->
+      <div id="tabGazetteer" class="hidden bg-[#fbf4e4] rounded-xl border-2 border-[#b59f7d] p-4 shadow-xl flex-1 flex flex-col max-h-[720px]">
+        <div class="mb-3 border-b border-[#d8c3a3] pb-2 flex justify-between items-center">
+          <div>
+            <h2 class="font-serif font-bold text-base text-[#382b19]">原本地图全地名中法对应检索</h2>
+            <p class="text-xs text-stone-600">原版法文缩写（A代表英属，F代表法属，J代表日属等）</p>
+          </div>
+          <input type="text" id="gazetteerSearch" placeholder="搜索地名/群岛..." class="text-xs bg-white border border-[#bfa989] rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-700">
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar pr-1" id="gazetteerList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Tab Content 3: Photoshop / AI Inpainting Prompt Guide -->
+      <div id="tabAiPrompt" class="hidden bg-[#fbf4e4] rounded-xl border-2 border-[#b59f7d] p-4 shadow-xl flex-1 flex flex-col max-h-[720px] overflow-y-auto custom-scrollbar">
+        <h2 class="font-serif font-bold text-base text-[#382b19] mb-1">Photoshop / SD / Midjourney 局部修改指南</h2>
+        <p class="text-xs text-stone-600 mb-3">若要在您的原始扫描图片上无痕替换地名，可遵循以下流程与指令：</p>
+
+        <div class="space-y-3 text-xs text-stone-800">
+          <div class="bg-white p-3 rounded-lg border border-[#cfbd9f]">
+            <h3 class="font-bold text-amber-900 mb-1">方案 A：Photoshop 创成式填充 (Generative Fill)</h3>
+            <ol class="list-decimal list-inside space-y-1 text-stone-700">
+              <li>用套索工具圈选原图的法文文字（如 "Iles Marquises"）。</li>
+              <li>在创成式填充框中<strong>留空直接点生成</strong>（自动按羊皮纸底纹完美抹去旧字）。</li>
+              <li>使用文字工具，字体选用 <strong>思源宋体 / 方正宋黑</strong>，色值取自原图墨迹 <code class="bg-stone-100 px-1 text-red-900 font-mono">#2B241C</code>，设置为倾斜或弧形。</li>
+            </ol>
+          </div>
+
+          <div class="bg-white p-3 rounded-lg border border-[#cfbd9f]">
+            <h3 class="font-bold text-amber-900 mb-1">方案 B：Stable Diffusion / FLUX 局部重绘 (Inpainting) Prompt</h3>
+            <div class="bg-stone-100 p-2 rounded text-[11px] font-mono text-stone-800 border border-stone-300 relative group">
+              <p>Positive Prompt:</p>
+              <p class="text-emerald-800 font-medium">
+                1895 vintage antique Oceania Pacific map, Hetzel edition cartography, parchment paper texture, engraved black ink lines, seamless aged paper texture background without text, masterpiece, ultra-detailed
+              </p>
+              <button onclick="copyPromptText(this)" class="mt-2 text-xs bg-amber-700 text-white px-2 py-0.5 rounded shadow hover:bg-amber-600">复制 Prompt</button>
+            </div>
+          </div>
+
+          <div class="bg-amber-50 p-3 rounded-lg border border-amber-300 text-stone-700">
+            <h3 class="font-bold text-amber-900 mb-1">方案 C：一键使用本站直接导出</h3>
+            <p>左侧互动地图已经全部矢量化还原了原图航线与完整中文地名。点击顶部绿色的<strong>【导出高清中文地图 (PNG)】</strong>即可直接下载带中文字体、古典羊皮纸版画质感的成图！</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    /* Complete geographical dataset mapped from the 1895 Hetzel map and Verne's chapters */
+    const MAP_DATA = {
+      oceansAndContinents: [
+        { cn: "大 洋 洲", fr: "OCÉANIE", x: 880, y: 760, size: 22, style: "title" },
+        { cn: "太　平　洋", fr: "GRAND OCÉAN PACIFIQUE", x: 540, y: 310, size: 20, style: "ocean" },
+        { cn: "北 美 洲", fr: "AMÉRIQUE DU NORD", x: 910, y: 110, size: 16, style: "continent" },
+        { cn: "澳 大 利 亚", fr: "AUSTRALIE", x: 100, y: 640, size: 18, style: "continent" },
+        { cn: "日 本", fr: "JAPON", x: 70, y: 80, size: 15, style: "continent" },
+        { cn: "新 西 兰", fr: "NOUVELLE ZÉLANDE", x: 425, y: 855, size: 14, style: "continent" },
+        { cn: "新几内亚", fr: "Nouvelle Guinée", x: 110, y: 460, size: 11, style: "region" },
+        { cn: "西里伯斯 (苏拉威西)", fr: "Célèbes", x: 30, y: 420, size: 10, style: "region" }
+      ],
+      linesOfLatitude: [
+        { name: "北回归线", fr: "Tropique du Cancer", y: 200 },
+        { name: "赤　道", fr: "Équateur", y: 420 },
+        { name: "南回归线", fr: "Tropique du Capricorne", y: 640 }
+      ],
+      // Complete 28 chapters directly matched with Jules Verne's 1895 text with exact plot details
+      chapters: [
+        // PART 1 (第一部 1~14章)
+        {
+          id: 1,
+          part: 1,
+          num: "第一部 第1章",
+          title: "四重奏乐队 (Le Quatuor Concertant)",
+          placeCn: "旧金山 → 圣地亚哥 (Paschal站翻车)",
+          placeFr: "San Francisco → San-Diégo / Paschal",
+          x: 795, y: 70,
+          desc: "倒叙四位巴黎音乐家（佐恩、伊韦尔内、弗拉斯克兰、潘希纳）全美巡演。主线：四人乘火车赴圣地亚哥演途中遭遇铁路被洪水冲毁，转乘旧马车在距圣地亚哥二十多英里处翻车。"
+        },
+        {
+          id: 2,
+          part: 1,
+          num: "第一部 第2章",
+          title: "不和谐奏鸣曲的威力 (Puissance d'une sonate...)",
+          placeCn: "下加利福尼亚荒野 (弗雷夏尔村 Freschal)",
+          placeFr: "Basse-Californie / Freschal",
+          x: 820, y: 130,
+          desc: "四人在荒野小村弗雷夏尔故意奏响刺耳喧闹的'不和谐奏鸣曲'以唤醒村民。演出惊动了自称卡利斯图斯·芒巴的美国人，力邀四人做客并承诺次日送回圣地亚哥；乘电动马车渡水深夜登上一座不夜城。"
+        },
+        {
+          id: 3,
+          part: 1,
+          num: "第一部 第3章",
+          title: "饶舌的导游 (Un loquace cicérone)",
+          placeCn: "标准岛 / 亿万城 (十亿城)",
+          placeFr: "Standard-Island / Milliard-City",
+          x: 835, y: 155,
+          desc: "芒巴次日带领四人参观这座钢铁浮岛的设施：发电厂、电车、天文台、赌场与音乐厅等。四人逐渐惊愕地发觉这座现代化大都市并非位于陆地，而是漂浮于海面之上。"
+        },
+        {
+          id: 4,
+          part: 1,
+          num: "第一部 第4章",
+          title: "四重奏乐队陷入窘境 (Le Quatuor concertant déconcerté)",
+          placeCn: "下加利福尼亚外海",
+          placeFr: "Au large de la Basse-Californie",
+          x: 840, y: 175,
+          desc: "四人发觉被骗：标准岛已解缆起航，行李仍留在圣地亚哥。芒巴正式亮出底牌——他是标准岛文娱总管，专门策划这出绑架式邀请，早已拟好一份无法回绝的高薪合同。"
+        },
+        {
+          id: 5,
+          part: 1,
+          num: "第一部 第5章",
+          title: "标准岛与亿万城 (Standard-Island et Milliard-City)",
+          placeCn: "玛德莱娜湾母港 (加利福尼亚半岛南端)",
+          placeFr: "Madeleine-Bay (Basse-Californie)",
+          x: 845, y: 198,
+          desc: "详述标准岛诞生史：由标准岛公司在玛德莱娜湾建造，长7公里宽5公里，承载富豪之城亿万城。全城以第一大道为界分裂对立：右舷以纳特·考弗利为首，左舷以杰姆·唐克尔顿为首。"
+        },
+        {
+          id: 6,
+          part: 1,
+          num: "第一部 第6章",
+          title: "客人……俯首就范 (Invités… inviti)",
+          placeCn: "亿万城 赌场公寓与音乐厅",
+          placeFr: "Milliard-City",
+          x: 830, y: 205,
+          desc: "四人最终接受一年百万法郎高薪合同，搬入赌场公寓。首场音乐会票价高达200美元依然爆满。散场时伊韦尔内注意到一对衣着寒酸的夫妇——竟是虚构小国马莱卡利流亡的国王与王后（在岛上算'穷人'）。"
+        },
+        {
+          id: 7,
+          part: 1,
+          num: "第一部 第7章",
+          title: "向西航行 (Cap à l'ouest)",
+          placeCn: "驶离加利福尼亚海岸",
+          placeFr: "Départ vers les Sandwich",
+          x: 775, y: 175,
+          desc: "标准岛正式全速向西开拔，目标桑威奇群岛（航程约1200海里，预计一个月）。两大阵营路线分歧显现：唐克尔顿派主张将全岛工商业化扩张，考弗利派则坚决要求维持清净奢华现状。"
+        },
+        {
+          id: 8,
+          part: 1,
+          num: "第一部 第8章",
+          title: "航行 (Navigation)",
+          placeCn: "北太平洋公海",
+          placeFr: "Grand Océan Pacifique",
+          x: 670, y: 160,
+          desc: "航行日常生活纪实：报纸、电报与美国本土互通；总督赛勒斯·拜克斯塔夫艰难周旋在两大家族间；选举季临近，两派为下任总督人选明争暗斗。潘希纳与考弗利家的小姐戴·考弗利逐渐熟络。"
+        },
+        {
+          id: 9,
+          part: 1,
+          num: "第一部 第9章",
+          title: "桑威奇群岛 (L'archipel des Sandwich)",
+          placeCn: "桑威奇群岛 (夏威夷檀香山)",
+          placeFr: "Iles Sandwich (Honolulu)",
+          x: 565, y: 228,
+          desc: "抵达夏威夷并在檀香山停靠10天。期间标准岛救起了一艘遇难马来小帆船的船员——萨罗尔船长（Sarol）与10名马来人，他们原本运送椰干往檀香山；书中详叙被推翻的莉莉乌欧卡拉尼女王历史。"
+        },
+        {
+          id: 10,
+          part: 1,
+          num: "第一部 第10章",
+          title: "跨越赤道 (Passage de la ligne)",
+          placeCn: "赤道线 (进入南半球)",
+          placeFr: "Équateur (Hémisphère Sud)",
+          x: 555, y: 420,
+          desc: "标准岛平稳穿越赤道进入南半球。大提琴手佐恩对这座钢铁怪物的未来始终充满疑虑与不安，而其他三位同伴则已逐渐适应并安于眼前奢华舒适的漂泊生活。"
+        },
+        {
+          id: 11,
+          part: 1,
+          num: "第一部 第11章",
+          title: "马克萨斯群岛 (Îles Marquises)",
+          placeCn: "马克萨斯群岛 (努库希瓦/希瓦欧阿)",
+          placeFr: "Iles Marquises (Nouka-Hiva)",
+          x: 685, y: 512,
+          desc: "驶抵马克萨斯群岛，游览努卡-希瓦、希瓦-奥阿、乌阿普、法图-伊瓦等岛屿。详加引介波利尼西亚神圣的'禁忌'(tabou)风俗信仰。标准岛于9月5日离开主岛，9月9日驶离群岛南端。"
+        },
+        {
+          id: 12,
+          part: 1,
+          num: "第一部 第12章",
+          title: "帕摩图群岛三星期 (Trois semaines aux Pomotou)",
+          placeCn: "帕摩图群岛 (土阿莫土环礁群)",
+          placeFr: "Iles Pamotou (Fakarava, Hao)",
+          x: 660, y: 585,
+          desc: "在帕摩图群岛珊瑚环礁停泊三星期。途中标准岛接通海底电缆与玛德莱娜湾总部取得联络，获准在顺路经过新赫布里底群岛时遣返马来船员；萨罗尔船长表面对决议'感激涕零'。"
+        },
+        {
+          id: 13,
+          part: 1,
+          num: "第一部 第13章",
+          title: "停泊在塔希提 (Relâche à Tahiti)",
+          placeCn: "塔希提岛 (帕皮提港)",
+          placeFr: "Tahiti (Papeete)",
+          x: 615, y: 590,
+          desc: "抵靠大溪地帕皮提港。四人上岸游览风光并拜会塔希提女王波马雷六世（Pomaré VI）。在考弗利家的沙龙晚会上，第一小提琴伊韦尔内与戴·考弗利小姐合奏对唱，互生爱慕情愫。"
+        },
+        {
+          id: 14,
+          part: 1,
+          num: "第一部 第14章",
+          title: "盛宴连席 (De fêtes en fêtes)",
+          placeCn: "社会群岛 (莫雷阿/波拉波拉)",
+          placeFr: "Iles Sous le Vent (Moorea, Bora-Bora)",
+          x: 580, y: 575,
+          desc: "法国太平洋舰队'巴黎'号抵塔希提。芒巴筹办招待女王与军官的盛大舞会；沃尔特·唐克尔顿与戴·考弗利携手起舞，两大家族首次现和解曙光。随后巡航莫雷阿、波拉波拉等岛，11月19日启程离开。"
+        },
+
+        // PART 2 (第二部 15~28章)
+        {
+          id: 15,
+          part: 2,
+          num: "第二部 第1章",
+          title: "在库克群岛 (Aux Îles de Cook)",
+          placeCn: "库克群岛 (曼加伊亚/拉罗汤加)",
+          placeFr: "Iles de Cook (Mangia, Rarotonga)",
+          x: 540, y: 625,
+          desc: "曼加伊亚岛官员索要高额停泊税遭拜克斯塔夫总督断然拒绝，拉罗汤加亦未靠泊。富豪们提议改道法属新喀里多尼亚，马来人萨罗尔因无法回新赫布里底而暗急；最终改道萨摩亚，萨罗尔表面感激实则恼恨。"
+        },
+        {
+          id: 16,
+          part: 2,
+          num: "第二部 第2章",
+          title: "从岛到岛 (D'îles en îles)",
+          placeCn: "萨摩亚群岛 (帕果帕果 / 阿皮亚港)",
+          placeFr: "Iles Samoa (Pago-Pago, Apia, Savaï)",
+          x: 440, y: 545,
+          desc: "途经罗泽岛与马努阿岛，停靠图图伊拉岛帕果帕果港，探访1787年拉佩鲁斯探险队遇难碑；后停靠乌波卢岛阿皮亚拜会德英美领事；12月23日离港遥望萨瓦伊岛，24日晚驶离萨摩亚。"
+        },
+        {
+          id: 17,
+          part: 2,
+          num: "第二部 第3章",
+          title: "御前音乐会 (Concert à la cour)",
+          placeCn: "萨摩亚至汤加途中 (亿万城市政厅/天文台)",
+          placeFr: "En mer vers Tonga",
+          x: 460, y: 585,
+          desc: "圣诞节前后。流亡的马莱卡利国王主动受聘为市政天文台天文学家，博学且酷爱音乐的他与四重奏结为挚友。两大家族关系持续缓和，沃尔特·唐克尔顿与戴·考弗利的恋情正式公开化。"
+        },
+        {
+          id: 18,
+          part: 2,
+          num: "第二部 第4章",
+          title: "英国的最后通牒 (Ultimatum britannique)",
+          placeCn: "驶往汤加海域",
+          placeFr: "En mer vers les Tonga",
+          x: 450, y: 605,
+          desc: "英媒长期抨击标准岛是威胁其太平洋霸权的'移动堡垒'，英国政府正式送达外交抗议与最后通牒。岛上右舷与左舷对此反应各执己见，下一任总督选举大战火药味愈发浓烈。"
+        },
+        {
+          id: 19,
+          part: 2,
+          num: "第二部 第5章",
+          title: "汤加-塔布的'塔布' (Le Tabou à Tonga-Tabou)",
+          placeCn: "汤加王国 (汤加塔布岛)",
+          placeFr: "Iles Tonga (Tongatapu)",
+          x: 435, y: 630,
+          desc: "停靠受英保护的乔治一世国王领地。四人观看节庆并为土著伴奏舞曲，高潮时一名汤加人抢夺佐恩的大提琴大喊神圣'禁忌'(Tabou)；经当局紧急调解追回，宰杀大批生猪举行解禁仪式平息事态。"
+        },
+        {
+          id: 20,
+          part: 2,
+          num: "第二部 第6章",
+          title: "猛兽麇集 (Une collection de fauves)",
+          placeCn: "标准岛内部 (蛇河两岸与炮台)",
+          placeFr: "Parc et rivière Serpentine",
+          x: 405, y: 615,
+          desc: "离汤加后岛上突现大批狮、虎、豹、鬣狗与鳄鱼，夜袭家畜引发恐慌。调查揭露是英国轮船趁夜暗中偷运放生的破坏行径。全岛进入戒严战备，武装民兵与水兵联合部署围剿计划。"
+        },
+        {
+          id: 21,
+          part: 2,
+          num: "第二部 第7章",
+          title: "围猎 (Battues)",
+          placeCn: "亿万城市政厅广场",
+          placeFr: "Milliard-City (Place de l'Hôtel de Ville)",
+          x: 390, y: 610,
+          desc: "两日围猎共消灭53只猛兽。最后一只恶虎于清晨扑进市政厅广场扑伤沃尔特；纳特·考弗利奋勇拔刀相救，杰姆·唐克尔顿开枪击毙老虎！两大家族患难与共冰释前嫌，两家婚约正式提上日程。"
+        },
+        {
+          id: 22,
+          part: 2,
+          num: "第二部 第8章",
+          title: "斐济群岛和斐济人 (Fidji et Fidjiens)",
+          placeCn: "斐济群岛 (维提岛苏瓦港 Suva)",
+          placeFr: "Iles Fidji (Viti-Levou / Suva)",
+          x: 365, y: 590,
+          desc: "泊斐济苏瓦港。四人领略食人族恶名历史、口嚼配制卡瓦酒的奇俗与蚊灾侵扰。中提琴手潘希纳在一次黄昏独自离岛散步探幽时神秘失联，岛上搜救无果引起恐慌。"
+        },
+        {
+          id: 23,
+          part: 2,
+          num: "第二部 第9章",
+          title: "宣战理由 (Un casus belli)",
+          placeCn: "维提岛丛林食人生番据点",
+          placeFr: "Forêts de Viti-Levou",
+          x: 335, y: 560,
+          desc: "潘希纳遭斐济生番绑架并捆在树上待烹。拜克斯塔夫总督发出通牒：若不放人便以重炮将苏瓦轰为平地！锡姆科准将亲率百名水兵武装潜入密林，从篝火旁火线救回潘希纳，引发全岛轰动。"
+        },
+        {
+          id: 24,
+          part: 2,
+          num: "第二部 第10章",
+          title: "模范岛易主 (Changement de propriétaires)",
+          placeCn: "斐济至新赫布里底航段",
+          placeFr: "En mer vers Nouvelles-Hébrides",
+          x: 310, y: 535,
+          desc: "2月2日离斐济。航行途中标准岛开发公司正式宣告破产，唐克尔顿与考弗利联手出资买断整岛收归居民共有！沃尔特与戴的盛大婚礼定于2月27日举行，全岛沉浸在狂欢中。"
+        },
+        {
+          id: 25,
+          part: 2,
+          num: "第二部 第11章",
+          title: "进攻与防守 (Attaque et défense)",
+          placeCn: "埃罗芒戈与圣灵岛海域 (土著夜袭)",
+          placeFr: "Nouvelles-Hébrides (Erromango / Sandwich)",
+          x: 325, y: 515,
+          desc: "婚礼当夜巡游至市政厅时，萨罗尔纠集三四千来自埃罗芒戈与塔纳的土著突袭登岛！激战中总督中弹牺牲，危急关头流亡国王射杀萨罗尔；漂抵法属圣灵岛后，法殖民者带千名土著包抄歼灭残匪。"
+        },
+        {
+          id: 26,
+          part: 2,
+          num: "第二部 第12章",
+          title: "右舷与左舷的决裂 (Tribord et Bâbord, la barre)",
+          placeCn: "新赫布里底南下公海 (中央撕裂点)",
+          placeFr: "Pacifique Sud (Déchirement de l'île)",
+          x: 345, y: 640,
+          desc: "战后3月15日新总督选举三轮投票均平局陷入死局。两派决裂水火不容，各自强行反向启动左舷和右舷的大功率螺旋桨推进器！岛体在反向撕扯巨力下从中央地轴硬生生崩解撕裂！"
+        },
+        {
+          id: 27,
+          part: 2,
+          num: "第二部 第13章",
+          title: "潘希纳论局势 (Le mot de la situation...)",
+          placeCn: "南太平洋风暴漂流区",
+          placeFr: "Dérive dans la tempête",
+          x: 355, y: 720,
+          desc: "狂暴风暴撕碎残体，各动力舱下沉。潘希纳冷眼讽刺：'先是公司破产，接着是整座浮岛的崩溃！'原本固若金汤的钢铁标准岛破碎成无数块废铜烂铁，漫无目的地漂浮在汪洋之中。"
+        },
+        {
+          id: 28,
+          part: 2,
+          num: "第二部 第14章",
+          title: "结局 (Dénouement)",
+          placeCn: "奥克兰外海 (中央沉没与救援)",
+          placeFr: "Au large d'Auckland (Naufrage final)",
+          x: 340, y: 775,
+          desc: "黎明亿万城中央下沉数百人罹难。三块主残片漂聚幸存者，小夫妻安然无恙，四位乐手与乐器毫发未损。玛德莱娜湾救援船赶抵救援，乐手各领百万法郎返法。'太平洋明珠'终沉深渊。"
+        }
+      ],
+      // Detailed geographic entities from the original 1895 map with corrections
+      places: [
+        { cn: "圣弗朗西斯科 (旧金山)", fr: "San Francisco", x: 795, y: 70, type: "city", cap: "全书起点" },
+        { cn: "圣迭戈", fr: "S. Diego", x: 818, y: 125, type: "city" },
+        { cn: "玛德莱娜湾 (造岛基地)", fr: "Madeleine Bay", x: 840, y: 195, type: "bay", cap: "起航母港" },
+        { cn: "雷维利亚希赫多群岛", fr: "Iles Revillagigedo", x: 865, y: 260, type: "island" },
+        { cn: "克利珀顿岛", fr: "I. Clipperton (F.)", x: 885, y: 340, type: "island" },
+        { cn: "瓦胡岛 (檀香山)", fr: "I. Oahu", x: 565, y: 228, type: "island" },
+        { cn: "茂宜岛", fr: "I. Maui", x: 578, y: 242, type: "island" },
+        { cn: "夏威夷大岛", fr: "I. Hawaï", x: 590, y: 258, type: "island" },
+        { cn: "内克岛", fr: "I. Necker", x: 505, y: 195, type: "island" },
+        { cn: "莱桑岛", fr: "I. Laysan", x: 460, y: 175, type: "island" },
+        { cn: "帕尔迈拉环礁", fr: "I. Palmyra", x: 505, y: 375, type: "island" },
+        { cn: "华盛顿岛", fr: "I. Washington", x: 535, y: 385, type: "island" },
+        { cn: "芬宁岛 (塔布阿埃兰)", fr: "I. Fanning (A.)", x: 550, y: 400, type: "island" },
+        { cn: "圣诞岛 (基里蒂马蒂)", fr: "I. Christmas (A.)", x: 570, y: 430, type: "island" },
+        { cn: "贾维斯岛", fr: "I. Jervis", x: 510, y: 425, type: "island" },
+        { cn: "马尔登岛", fr: "I. Malden (A.)", x: 590, y: 465, type: "island" },
+        { cn: "斯塔巴克岛", fr: "I. Starbuck (A.)", x: 570, y: 485, type: "island" },
+        { cn: "努库希瓦岛", fr: "I. Nouka-Hiva", x: 675, y: 512, type: "island" },
+        { cn: "希瓦欧阿岛", fr: "I. Hiva-Oa", x: 710, y: 520, type: "island" },
+        { cn: "法图希瓦岛 (费图乌)", fr: "I. Fatou-Hiva", x: 715, y: 538, type: "island" },
+        { cn: "失望群岛", fr: "I. Désappointement", x: 675, y: 555, type: "island" },
+        { cn: "法卡拉瓦环礁", fr: "I. Fakarava", x: 645, y: 585, type: "island" },
+        { cn: "郝岛", fr: "I. Hao", x: 685, y: 605, type: "island" },
+        { cn: "阿纳环礁", fr: "I. Anaa", x: 645, y: 615, type: "island" },
+        { cn: "塔希提 (大溪地)", fr: "Tahiti", x: 615, y: 590, type: "island", cap: "大宴之岛" },
+        { cn: "莫雷阿与波拉波拉", fr: "Iles Sous le Vent", x: 575, y: 570, type: "island" },
+        { cn: "拉罗汤加岛", fr: "I. Rarotonga", x: 530, y: 625, type: "island" },
+        { cn: "芒阿亚岛", fr: "I. Mangaïa", x: 545, y: 638, type: "island" },
+        { cn: "萨摩亚群岛 (阿皮亚)", fr: "Iles Samoa (Apia)", x: 440, y: 545, type: "island", cap: "萨摩亚" },
+        { cn: "萨瓦伊岛", fr: "I. Savaï", x: 420, y: 538, type: "island" },
+        { cn: "乌波卢岛", fr: "I. Upolu", x: 448, y: 550, type: "island" },
+        { cn: "图图伊拉 (帕果帕果)", fr: "I. Tutuila (Pago)", x: 468, y: 556, type: "island" },
+        { cn: "汤加塔布岛", fr: "I. Tonga-tabou", x: 435, y: 630, type: "island", cap: "大布禁忌" },
+        { cn: "斐济瓦努阿岛", fr: "I. Vanua-Levou", x: 375, y: 580, type: "island" },
+        { cn: "斐济维提岛", fr: "I. Viti-Levou", x: 360, y: 600, type: "island" },
+        { cn: "埃罗芒戈岛 (生番血战)", fr: "I. Erromango", x: 310, y: 545, type: "island", cap: "土著激战" },
+        { cn: "塔纳岛", fr: "I. Tanna", x: 312, y: 570, type: "island" },
+        { cn: "新赫布里底群岛", fr: "N.lles Hébrides (A.)", x: 275, y: 565, type: "island" },
+        { cn: "所罗门群岛", fr: "Iles Salomon (All.)", x: 280, y: 475, type: "island" },
+        { cn: "圣克鲁斯群岛", fr: "I.es Ste Cruz", x: 325, y: 515, type: "island" },
+        { cn: "新喀里多尼亚 (法属)", fr: "N.lle Calédonie (F.)", x: 245, y: 625, type: "island" },
+        { cn: "洛亚蒂群岛", fr: "I.es Loyalty (F.)", x: 275, y: 630, type: "island" },
+        { cn: "吉尔伯特群岛", fr: "Iles Gilbert", x: 375, y: 410, type: "island" },
+        { cn: "埃利斯群岛 (图瓦卢)", fr: "Iles Ellice", x: 400, y: 480, type: "island" },
+        { cn: "马绍尔群岛", fr: "Arch. Marshall", x: 295, y: 320, type: "island" },
+        { cn: "加罗林群岛", fr: "Iles Carolines (E.)", x: 120, y: 310, type: "island" },
+        { cn: "奥克兰 (新西兰北岛)", fr: "Auckland (Ile du Nord)", x: 345, y: 775, type: "city", cap: "最终沉没" },
+        { cn: "悉尼", fr: "Sydney", x: 175, y: 745, type: "city" },
+        { cn: "墨尔本", fr: "Melbourne", x: 135, y: 785, type: "city" },
+        { cn: "布里斯班", fr: "Brisbane", x: 175, y: 695, type: "city" },
+        { cn: "复活节岛", fr: "I. de Pâques (Chili)", x: 910, y: 685, type: "island" }
+      ],
+      // Verified path coordinates reflecting actual 1895 map line from San Francisco -> Madeleine Bay -> ... -> Auckland
+      routePoints: [
+        { x: 808, y: 68, label: "旧金山起航" },
+        { x: 818, y: 125 }, // S. Diego
+        { x: 840, y: 195, label: "玛德莱娜湾出航" }, // Madeleine Bay
+        { x: 810, y: 185 },
+        { x: 740, y: 165 },
+        { x: 660, y: 170 },
+        { x: 575, y: 195 },
+        { x: 545, y: 222 }, // Hawaii / Honolulu
+        { x: 558, y: 245 }, // Maui / Hawaii Island
+        { x: 560, y: 295 },
+        { x: 548, y: 360 },
+        { x: 555, y: 420 }, // Cross Equator
+        { x: 570, y: 460 },
+        { x: 620, y: 480 },
+        { x: 665, y: 490 },
+        { x: 685, y: 512 }, // Marquises (Nouka-Hiva)
+        { x: 658, y: 545 },
+        { x: 660, y: 585 }, // Tuamotu (Fakarava)
+        { x: 615, y: 590 }, // Tahiti / Society Islands
+        { x: 580, y: 575 }, // Moorea / Bora-Bora
+        { x: 540, y: 625 }, // Cook Islands (Mangaia)
+        { x: 480, y: 565 },
+        { x: 440, y: 545 }, // Samoa (Apia / Savaï)
+        { x: 435, y: 630 }, // Tonga-tabou
+        { x: 395, y: 610 }, // Wild Beasts Battue
+        { x: 365, y: 590 }, // Fiji (Viti-Levou / Koro Sea)
+        { x: 335, y: 560 }, // Casus Belli
+        { x: 310, y: 535 }, // Erromango (Nouvelles-Hébrides)
+        { x: 325, y: 485 }, // North turn near Solomons
+        { x: 345, y: 490 },
+        { x: 350, y: 560 },
+        { x: 345, y: 640 }, // Propellers Opposite Drive (Rupture)
+        { x: 355, y: 720 }, // Drifting south
+        { x: 340, y: 775, label: "终点：奥克兰海域解体沉没" }
+      ]
+    };
+  </script>
+
+  <script>
+    // Main DOM element references
+    const container = document.getElementById('canvasContainer');
+    const canvas = document.getElementById('mapCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const tooltip = document.getElementById('mapTooltip');
+    const tooltipTitle = document.getElementById('tooltipTitle');
+    const tooltipSub = document.getElementById('tooltipSub');
+    const tooltipDesc = document.getElementById('tooltipDesc');
+
+    // Virtual coordinate space matching 1895 Hetzel engraving
+    const VIRTUAL_WIDTH = 1000;
+    const VIRTUAL_HEIGHT = 920;
+
+    let scale = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let hoveredChapter = null;
+    let viewMode = 'chinese'; // 'chinese' or 'bilingual'
+    let currentPartFilter = 'all'; // 'all', '1', '2'
+
+    // Touch gesture tracking for mobile
+    let initialPinchDistance = null;
+    let initialPinchScale = null;
+
+    function drawGraticule() {
+      ctx.save();
+      ctx.strokeStyle = "#97b8ab";
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([4, 4]);
+
+      // Parallels of latitude
+      const lats = [
+        { y: 120, label: "30° 北纬" },
+        { y: 200, label: "北回归线 (Tropique du Cancer)", special: true },
+        { y: 420, label: "赤　道 (Équateur)", special: true },
+        { y: 640, label: "南回归线 (Tropique du Capricorne)", special: true },
+        { y: 720, label: "30° 南纬" }
+      ];
+
+      lats.forEach(lat => {
+        ctx.beginPath();
+        ctx.strokeStyle = lat.special ? "#7ea796" : "#a8c5ba";
+        ctx.lineWidth = lat.special ? 1.1 : 0.7;
+        ctx.moveTo(10, lat.y);
+        ctx.lineTo(VIRTUAL_WIDTH - 10, lat.y);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.font = lat.special ? "bold 11px 'Noto Serif SC', serif" : "10px 'Noto Serif SC', serif";
+        ctx.fillStyle = "#4a6e60";
+        ctx.fillText(lat.label, 410, lat.y - 4);
+        ctx.setLineDash([4, 4]);
+      });
+
+      // Meridians of longitude
+      const lons = [
+        { x: 110, label: "150° 东经" },
+        { x: 410, label: "180° 经线" },
+        { x: 620, label: "150° 西经" },
+        { x: 830, label: "120° 西经" }
+      ];
+
+      lons.forEach(lon => {
+        ctx.beginPath();
+        ctx.strokeStyle = "#97b8ab";
+        ctx.lineWidth = 0.8;
+        ctx.setLineDash([3, 3]);
+        ctx.moveTo(lon.x, 10);
+        ctx.lineTo(lon.x, VIRTUAL_HEIGHT - 10);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.font = "11px 'Noto Serif SC', serif";
+        ctx.fillStyle = "#557467";
+        ctx.fillText(lon.label, lon.x - 22, 24);
+      });
+
+      ctx.restore();
+    }
+
+    function drawCoastlines() {
+      ctx.save();
+      ctx.fillStyle = "#d2dfcb"; // Antique map land green
+      ctx.strokeStyle = "#8b9c7b";
+      ctx.lineWidth = 1.5;
+
+      // North America (Top Right)
+      ctx.beginPath();
+      ctx.moveTo(790, 10);
+      ctx.bezierCurveTo(800, 40, 810, 70, 805, 80);
+      ctx.bezierCurveTo(825, 120, 840, 150, 850, 190);
+      ctx.lineTo(880, 240);
+      ctx.bezierCurveTo(900, 210, 930, 260, 990, 280);
+      ctx.lineTo(990, 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Australia (Bottom Left)
+      ctx.beginPath();
+      ctx.moveTo(10, 480);
+      ctx.bezierCurveTo(70, 480, 110, 520, 130, 560);
+      ctx.bezierCurveTo(180, 560, 190, 620, 195, 680);
+      ctx.bezierCurveTo(200, 720, 175, 750, 160, 780);
+      ctx.bezierCurveTo(120, 790, 90, 770, 40, 750);
+      ctx.lineTo(10, 750);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Tasmania
+      ctx.beginPath();
+      ctx.ellipse(145, 840, 22, 20, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // New Zealand (North & South Islands)
+      ctx.beginPath();
+      ctx.ellipse(345, 785, 18, 28, -0.4, 0, Math.PI * 2); // North Island
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.ellipse(315, 840, 18, 38, -0.5, 0, Math.PI * 2); // South Island
+      ctx.fill();
+      ctx.stroke();
+
+      // Japan (Top Left)
+      ctx.beginPath();
+      ctx.ellipse(50, 60, 35, 16, -0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawRoute() {
+      const pts = MAP_DATA.routePoints;
+      if (!pts || pts.length < 2) return;
+
+      ctx.save();
+      // Outer parchment halo glow
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) {
+        ctx.lineTo(pts[i].x, pts[i].y);
+      }
+      ctx.strokeStyle = "rgba(255, 245, 220, 0.75)";
+      ctx.lineWidth = 6;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.stroke();
+
+      // Engraved dark ink route line
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) {
+        ctx.lineTo(pts[i].x, pts[i].y);
+      }
+      ctx.strokeStyle = "#1a120c";
+      ctx.lineWidth = 2.8;
+      ctx.stroke();
+
+      // Red inner accent
+      ctx.strokeStyle = "#8b1818";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Chapter landmark milestone pins
+      MAP_DATA.chapters.forEach(ch => {
+        const isHovered = hoveredChapter && hoveredChapter.id === ch.id;
+        ctx.beginPath();
+        ctx.arc(ch.x, ch.y, isHovered ? 8.5 : 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = isHovered ? "#d97706" : "#8b1818";
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = isHovered ? 2.5 : 1.5;
+        ctx.stroke();
+
+        // Extra outer pulse ring for hovered item
+        if (isHovered) {
+          ctx.beginPath();
+          ctx.arc(ch.x, ch.y, 12, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(217, 119, 6, 0.6)";
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+        }
+      });
+
+      ctx.restore();
+    }
+
+    function drawLabels() {
+      ctx.save();
+
+      // Oceans and Continents
+      MAP_DATA.oceansAndContinents.forEach(item => {
+        ctx.fillStyle = item.style === 'ocean' ? '#4d7568' : '#221910';
+        ctx.font = `bold ${item.size}px 'Cinzel', 'Noto Serif SC', serif`;
+        ctx.textAlign = "center";
+        
+        let label = item.cn;
+        if (viewMode === 'bilingual') {
+          ctx.fillText(label, item.x, item.y);
+          ctx.font = `italic ${Math.max(9, item.size - 5)}px 'Cinzel', serif`;
+          ctx.fillStyle = "#5c4f3e";
+          ctx.fillText(item.fr, item.x, item.y + item.size * 0.9);
+        } else {
+          ctx.fillText(label, item.x, item.y);
+        }
+      });
+
+      // Individual Locations & Islands
+      MAP_DATA.places.forEach(p => {
+        const isCity = p.type === 'city';
+        ctx.font = isCity 
+          ? "bold 12px 'Noto Serif SC', serif" 
+          : "11px 'Noto Serif SC', serif";
+        ctx.fillStyle = isCity ? "#19110a" : "#2f2417";
+        ctx.textAlign = "left";
+
+        if (!isCity) {
+          ctx.fillStyle = "#3e5246";
+          ctx.beginPath();
+          ctx.arc(p.x - 4, p.y - 3, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = isCity ? "#140e08" : "#2a1e12";
+        ctx.fillText(p.cn, p.x + 3, p.y);
+
+        if (viewMode === 'bilingual') {
+          ctx.font = "italic 9px sans-serif";
+          ctx.fillStyle = "#61523f";
+          ctx.fillText(p.fr, p.x + 3, p.y + 11);
+        }
+      });
+
+      ctx.restore();
+    }
+
+    function drawNeatline() {
+      ctx.save();
+      ctx.strokeStyle = "#4a3b2b";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(6, 6, VIRTUAL_WIDTH - 12, VIRTUAL_HEIGHT - 12);
+
+      ctx.strokeStyle = "#7c6853";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(12, 12, VIRTUAL_WIDTH - 24, VIRTUAL_HEIGHT - 24);
+
+      // Title banner in top-left corner
+      ctx.fillStyle = "#36291b";
+      ctx.font = "bold 12px 'Noto Serif SC', serif";
+      ctx.fillText("凡尔纳小说《L'Île à hélice》1895年路线图", 25, 45);
+
+      ctx.restore();
+    }
+
+    function drawMap() {
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      // Clear full display buffer
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+
+      // Transform world
+      ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
+
+      // Antique ocean background
+      ctx.fillStyle = "#dbece5";
+      ctx.fillRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+
+      // Layers in order
+      drawGraticule();
+      drawCoastlines();
+      drawRoute();
+      drawLabels();
+      drawNeatline();
+
+      ctx.restore();
+    }
+
+    function resizeCanvas() {
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+
+      // Calculate uniform scale to fit virtual bounds
+      const scaleX = (rect.width - 20) / VIRTUAL_WIDTH;
+      const scaleY = (rect.height - 20) / VIRTUAL_HEIGHT;
+      scale = Math.min(scaleX, scaleY);
+      offsetX = (rect.width - VIRTUAL_WIDTH * scale) / 2;
+      offsetY = (rect.height - VIRTUAL_HEIGHT * scale) / 2;
+
+      drawMap();
+    }
+
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX - offsetX;
+      startY = e.clientY - offsetY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      if (isDragging) {
+        offsetX = e.clientX - startX;
+        offsetY = e.clientY - startY;
+        drawMap();
+        tooltip.classList.add('hidden');
+        return;
+      }
+
+      // Check hover proximity to chapter milestones
+      const virtualX = (mouseX - offsetX) / scale;
+      const virtualY = (mouseY - offsetY) / scale;
+
+      let found = null;
+      for (const ch of MAP_DATA.chapters) {
+        const dx = ch.x - virtualX;
+        const dy = ch.y - virtualY;
+        if (Math.hypot(dx, dy) < 18) {
+          found = ch;
+          break;
+        }
+      }
+
+      if (found) {
+        hoveredChapter = found;
+        tooltipTitle.textContent = `${found.num}：${found.title}`;
+        tooltipSub.textContent = `📍 ${found.placeCn} (${found.placeFr})`;
+        tooltipDesc.textContent = found.desc;
+
+        tooltip.style.left = Math.min(rect.width - 290, mouseX + 15) + 'px';
+        tooltip.style.top = Math.min(rect.height - 150, mouseY + 15) + 'px';
+        tooltip.classList.remove('hidden');
+        drawMap();
+      } else {
+        if (hoveredChapter) {
+          hoveredChapter = null;
+          tooltip.classList.add('hidden');
+          drawMap();
+        }
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = 1.15;
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const prevScale = scale;
+      if (e.deltaY < 0) {
+        scale = Math.min(scale * zoomFactor, 4.5);
+      } else {
+        scale = Math.max(scale / zoomFactor, 0.4);
+      }
+
+      offsetX = mouseX - (mouseX - offsetX) * (scale / prevScale);
+      offsetY = mouseY - (mouseY - offsetY) * (scale / prevScale);
+      drawMap();
+    }, { passive: false });
+
+    // Zoom Buttons
+    document.getElementById('btnZoomIn').addEventListener('click', () => {
+      const rect = container.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const prevScale = scale;
+      scale = Math.min(scale * 1.25, 4.5);
+      offsetX = cx - (cx - offsetX) * (scale / prevScale);
+      offsetY = cy - (cy - offsetY) * (scale / prevScale);
+      drawMap();
+    });
+
+    document.getElementById('btnZoomOut').addEventListener('click', () => {
+      const rect = container.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const prevScale = scale;
+      scale = Math.max(scale / 1.25, 0.4);
+      offsetX = cx - (cx - offsetX) * (scale / prevScale);
+      offsetY = cy - (cy - offsetY) * (scale / prevScale);
+      drawMap();
+    });
+
+    document.getElementById('btnResetView').addEventListener('click', () => {
+      resizeCanvas();
+    });
+
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - offsetX;
+        startY = e.touches[0].clientY - offsetY;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        initialPinchDistance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        initialPinchScale = scale;
+      }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging) {
+        offsetX = e.touches[0].clientX - startX;
+        offsetY = e.touches[0].clientY - startY;
+        drawMap();
+      } else if (e.touches.length === 2 && initialPinchDistance) {
+        const currentDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = currentDist / initialPinchDistance;
+        scale = Math.max(0.4, Math.min(initialPinchScale * factor, 4.5));
+        drawMap();
+      }
+    }, { passive: true });
+
+    container.addEventListener('touchend', () => {
+      isDragging = false;
+      initialPinchDistance = null;
+    });
+
+    function focusLocation(targetX, targetY) {
+      const rect = container.getBoundingClientRect();
+      scale = 1.9;
+      offsetX = (rect.width / 2) - targetX * scale;
+      offsetY = (rect.height / 2) - targetY * scale;
+      drawMap();
+    }
+
+    function populateChaptersList() {
+      const listContainer = document.getElementById('chapterListContainer');
+      listContainer.innerHTML = '';
+
+      const filteredChapters = MAP_DATA.chapters.filter(ch => {
+        if (currentPartFilter === '1') return ch.part === 1;
+        if (currentPartFilter === '2') return ch.part === 2;
+        return true;
+      });
+
+      filteredChapters.forEach(ch => {
+        const card = document.createElement('div');
+        const isHovered = hoveredChapter && hoveredChapter.id === ch.id;
+        card.className = `p-2.5 rounded-lg border transition shadow-sm cursor-pointer ${
+          isHovered 
+            ? "border-amber-700 bg-[#fffae8] ring-1 ring-amber-600" 
+            : "border-[#cbbb9e] bg-[#fbf6ec] hover:bg-[#fff9ed] hover:border-amber-600"
+        }`;
+
+        card.innerHTML = `
+          <div class="flex justify-between items-center gap-1 mb-1">
+            <span class="font-bold text-[#801e14] font-serif text-[11px]">${ch.num}</span>
+            <span class="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-sans">点击定位</span>
+          </div>
+          <div class="font-semibold text-stone-900 mb-0.5 text-xs">${ch.title}</div>
+          <div class="text-[11px] text-stone-600 mb-1 flex items-center gap-1">
+            <span>📍 ${ch.placeCn}</span>
+          </div>
+          <p class="text-[11px] text-stone-700 leading-snug">${ch.desc}</p>
+        `;
+
+        card.addEventListener('click', () => {
+          focusLocation(ch.x, ch.y);
+          hoveredChapter = ch;
+
+          const rect = container.getBoundingClientRect();
+          tooltipTitle.textContent = `${ch.num}：${ch.title}`;
+          tooltipSub.textContent = `📍 ${ch.placeCn} (${ch.placeFr})`;
+          tooltipDesc.textContent = ch.desc;
+          tooltip.style.left = '20px';
+          tooltip.style.top = '20px';
+          tooltip.classList.remove('hidden');
+
+          drawMap();
+        });
+
+        listContainer.appendChild(card);
+      });
+    }
+
+    // Filter button listeners
+    const filterAllBtn = document.getElementById('filterPartAll');
+    const filterP1Btn = document.getElementById('filterPart1');
+    const filterP2Btn = document.getElementById('filterPart2');
+
+    function updateFilterButtons() {
+      const activeClass = "px-2.5 py-1 rounded bg-amber-800 text-white font-medium shadow";
+      const normalClass = "px-2.5 py-1 rounded bg-[#ecdcc0] text-[#4d3a24] hover:bg-amber-200 font-medium";
+
+      filterAllBtn.className = currentPartFilter === 'all' ? activeClass : normalClass;
+      filterP1Btn.className = currentPartFilter === '1' ? activeClass : normalClass;
+      filterP2Btn.className = currentPartFilter === '2' ? activeClass : normalClass;
+    }
+
+    filterAllBtn.addEventListener('click', () => {
+      currentPartFilter = 'all';
+      updateFilterButtons();
+      populateChaptersList();
+    });
+
+    filterP1Btn.addEventListener('click', () => {
+      currentPartFilter = '1';
+      updateFilterButtons();
+      populateChaptersList();
+    });
+
+    filterP2Btn.addEventListener('click', () => {
+      currentPartFilter = '2';
+      updateFilterButtons();
+      populateChaptersList();
+    });
+
+    // View mode toggles
+    const btnViewChinese = document.getElementById('btnViewChinese');
+    const btnViewBilingual = document.getElementById('btnViewBilingual');
+
+    btnViewChinese.addEventListener('click', () => {
+      viewMode = 'chinese';
+      btnViewChinese.className = "px-3 py-1.5 rounded font-medium transition bg-amber-700 text-white shadow";
+      btnViewBilingual.className = "px-3 py-1.5 rounded font-medium transition text-stone-300 hover:text-white";
+      drawMap();
+    });
+
+    btnViewBilingual.addEventListener('click', () => {
+      viewMode = 'bilingual';
+      btnViewBilingual.className = "px-3 py-1.5 rounded font-medium transition bg-amber-700 text-white shadow";
+      btnViewChinese.className = "px-3 py-1.5 rounded font-medium transition text-stone-300 hover:text-white";
+      drawMap();
+    });
+
+    function populateGazetteer(filter = '') {
+      const list = document.getElementById('gazetteerList');
+      list.innerHTML = '';
+
+      const all = [...MAP_DATA.places, ...MAP_DATA.oceansAndContinents];
+      const filtered = all.filter(item => 
+        (item.cn && item.cn.toLowerCase().includes(filter.toLowerCase())) ||
+        (item.fr && item.fr.toLowerCase().includes(filter.toLowerCase()))
+      );
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div class="text-center text-stone-500 py-6">未找到匹配地名</div>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const row = document.createElement('div');
+        row.className = "flex justify-between items-center py-2 px-2.5 border-b border-[#e2d4be] text-xs hover:bg-amber-100/60 rounded cursor-pointer";
+        row.innerHTML = `
+          <div class="flex-1">
+            <span class="font-bold text-stone-900">${item.cn}</span>
+            <span class="text-stone-500 ml-2 italic text-[11px]">${item.fr || ''}</span>
+          </div>
+          <span class="text-[11px] text-amber-800 bg-amber-200/60 px-2 py-0.5 rounded">跳转</span>
+        `;
+
+        row.addEventListener('click', () => {
+          if (item.x && item.y) {
+            focusLocation(item.x, item.y);
+          }
+        });
+
+        list.appendChild(row);
+      });
+    }
+
+    document.getElementById('gazetteerSearch').addEventListener('input', (e) => {
+      populateGazetteer(e.target.value);
+    });
+
+    // Tab switcher logic
+    const tabBtnChapters = document.getElementById('tabBtnChapters');
+    const tabBtnGazetteer = document.getElementById('tabBtnGazetteer');
+    const tabBtnAiPrompt = document.getElementById('tabBtnAiPrompt');
+
+    const tabChapters = document.getElementById('tabChapters');
+    const tabGazetteer = document.getElementById('tabGazetteer');
+    const tabAiPrompt = document.getElementById('tabAiPrompt');
+
+    function setActiveTab(btn, content) {
+      [tabBtnChapters, tabBtnGazetteer, tabBtnAiPrompt].forEach(b => {
+        b.className = "flex-1 py-2 rounded-lg text-stone-300 hover:text-white";
+      });
+      btn.className = "flex-1 py-2 rounded-lg bg-amber-700 text-white font-semibold shadow";
+
+      [tabChapters, tabGazetteer, tabAiPrompt].forEach(c => c.classList.add('hidden'));
+      content.classList.remove('hidden');
+    }
+
+    tabBtnChapters.addEventListener('click', () => setActiveTab(tabBtnChapters, tabChapters));
+    tabBtnGazetteer.addEventListener('click', () => setActiveTab(tabBtnGazetteer, tabGazetteer));
+    tabBtnAiPrompt.addEventListener('click', () => setActiveTab(tabBtnAiPrompt, tabAiPrompt));
+
+    // Copy Prompt Helper
+    window.copyPromptText = function(btn) {
+      const text = "1895 vintage antique Oceania Pacific map, Hetzel edition cartography, parchment paper texture, engraved black ink lines, seamless aged paper texture background without text, masterpiece, ultra-detailed";
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand('copy');
+        const old = btn.innerText;
+        btn.innerText = "已复制！";
+        setTimeout(() => btn.innerText = old, 1500);
+      } catch (e) {
+        console.error(e);
+      }
+      document.body.removeChild(temp);
+    };
+
+    document.getElementById('btnDownloadMap').addEventListener('click', () => {
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = 2400;
+      exportCanvas.height = 2208;
+      const expCtx = exportCanvas.getContext('2d');
+      const expScale = 2400 / VIRTUAL_WIDTH;
+
+      expCtx.save();
+      expCtx.fillStyle = "#dbece5";
+      expCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+      expCtx.scale(expScale, expScale);
+
+      // Draw graticule
+      expCtx.save();
+      expCtx.strokeStyle = "#8daea1";
+      expCtx.lineWidth = 1;
+      expCtx.setLineDash([4, 4]);
+
+      const lats = [
+        { y: 120, label: "30° N" },
+        { y: 200, label: "北回归线 (Tropique du Cancer)", special: true },
+        { y: 420, label: "赤　道 (Équateur)", special: true },
+        { y: 640, label: "南回归线 (Tropique du Capricorne)", special: true },
+        { y: 720, label: "30° S" }
+      ];
+
+      lats.forEach(lat => {
+        expCtx.beginPath();
+        expCtx.moveTo(10, lat.y);
+        expCtx.lineTo(VIRTUAL_WIDTH - 10, lat.y);
+        expCtx.stroke();
+        expCtx.font = "italic 12px 'Noto Serif SC', serif";
+        expCtx.fillStyle = "#557467";
+        expCtx.fillText(lat.label, 400, lat.y - 5);
+      });
+
+      const lons = [
+        { x: 110, label: "150° 东经" },
+        { x: 410, label: "180° 经线" },
+        { x: 620, label: "150° 西经" },
+        { x: 830, label: "120° 西经" }
+      ];
+
+      lons.forEach(lon => {
+        expCtx.beginPath();
+        expCtx.moveTo(lon.x, 10);
+        expCtx.lineTo(lon.x, VIRTUAL_HEIGHT - 10);
+        expCtx.stroke();
+        expCtx.font = "12px 'Noto Serif SC', serif";
+        expCtx.fillStyle = "#557467";
+        expCtx.fillText(lon.label, lon.x - 24, 25);
+      });
+      expCtx.restore();
+
+      // Draw coastlines
+      expCtx.save();
+      expCtx.fillStyle = "#d2dfcb";
+      expCtx.strokeStyle = "#8b9c7b";
+      expCtx.lineWidth = 2;
+
+      // North America
+      expCtx.beginPath();
+      expCtx.moveTo(790, 10);
+      expCtx.bezierCurveTo(800, 40, 810, 70, 805, 80);
+      expCtx.bezierCurveTo(825, 120, 840, 150, 850, 190);
+      expCtx.lineTo(880, 240);
+      expCtx.bezierCurveTo(900, 210, 930, 260, 990, 280);
+      expCtx.lineTo(990, 10);
+      expCtx.closePath();
+      expCtx.fill();
+      expCtx.stroke();
+
+      // Australia
+      expCtx.beginPath();
+      expCtx.moveTo(10, 480);
+      expCtx.bezierCurveTo(70, 480, 110, 520, 130, 560);
+      expCtx.bezierCurveTo(180, 560, 190, 620, 195, 680);
+      expCtx.bezierCurveTo(200, 720, 175, 750, 160, 780);
+      expCtx.bezierCurveTo(120, 790, 90, 770, 40, 750);
+      expCtx.lineTo(10, 750);
+      expCtx.closePath();
+      expCtx.fill();
+      expCtx.stroke();
+
+      // New Zealand
+      expCtx.beginPath();
+      expCtx.ellipse(345, 785, 18, 28, -0.4, 0, Math.PI * 2);
+      expCtx.fill();
+      expCtx.stroke();
+
+      expCtx.beginPath();
+      expCtx.ellipse(315, 840, 18, 38, -0.5, 0, Math.PI * 2);
+      expCtx.fill();
+      expCtx.stroke();
+
+      expCtx.restore();
+
+      // Draw route
+      const pts = MAP_DATA.routePoints;
+      expCtx.save();
+      expCtx.beginPath();
+      expCtx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) expCtx.lineTo(pts[i].x, pts[i].y);
+      expCtx.strokeStyle = "#1a120c";
+      expCtx.lineWidth = 3.5;
+      expCtx.stroke();
+
+      expCtx.strokeStyle = "#8b1818";
+      expCtx.lineWidth = 1.6;
+      expCtx.stroke();
+
+      MAP_DATA.chapters.forEach(ch => {
+        expCtx.beginPath();
+        expCtx.arc(ch.x, ch.y, 6, 0, Math.PI * 2);
+        expCtx.fillStyle = "#8b1818";
+        expCtx.fill();
+        expCtx.strokeStyle = "#fff";
+        expCtx.lineWidth = 2;
+        expCtx.stroke();
+      });
+      expCtx.restore();
+
+      // Draw labels
+      expCtx.save();
+      MAP_DATA.oceansAndContinents.forEach(item => {
+        expCtx.fillStyle = item.style === 'ocean' ? '#4d7568' : '#221910';
+        expCtx.font = `bold ${item.size * 1.1}px 'Cinzel', 'Noto Serif SC', serif`;
+        expCtx.textAlign = "center";
+        expCtx.fillText(item.cn, item.x, item.y);
+      });
+
+      MAP_DATA.places.forEach(p => {
+        const isCity = p.type === 'city';
+        expCtx.font = isCity ? "bold 13px 'Noto Serif SC', serif" : "11.5px 'Noto Serif SC', serif";
+        expCtx.fillStyle = isCity ? "#140e08" : "#2a1e12";
+        expCtx.fillText(p.cn, p.x + 3, p.y);
+      });
+      expCtx.restore();
+
+      // Draw neatline
+      expCtx.save();
+      expCtx.strokeStyle = "#4a3b2b";
+      expCtx.lineWidth = 6;
+      expCtx.strokeRect(6, 6, VIRTUAL_WIDTH - 12, VIRTUAL_HEIGHT - 12);
+
+      // Legend box
+      expCtx.fillStyle = "#f8f1e0";
+      expCtx.fillRect(VIRTUAL_WIDTH - 280, VIRTUAL_HEIGHT - 170, 260, 150);
+      expCtx.strokeStyle = "#54432f";
+      expCtx.lineWidth = 2;
+      expCtx.strokeRect(VIRTUAL_WIDTH - 280, VIRTUAL_HEIGHT - 170, 260, 150);
+
+      expCtx.fillStyle = "#241a0e";
+      expCtx.font = "bold 18px 'Noto Serif SC', serif";
+      expCtx.textAlign = "center";
+      expCtx.fillText("大 洋 洲", VIRTUAL_WIDTH - 150, VIRTUAL_HEIGHT - 135);
+      expCtx.font = "12px sans-serif";
+      expCtx.fillStyle = "#777";
+      expCtx.fillText("OCÉANIE", VIRTUAL_WIDTH - 150, VIRTUAL_HEIGHT - 118);
+
+      expCtx.fillStyle = "#8b1818";
+      expCtx.font = "bold 13px 'Noto Serif SC', serif";
+      expCtx.fillText("—— 标准岛航行路线 ——", VIRTUAL_WIDTH - 150, VIRTUAL_HEIGHT - 90);
+      expCtx.fillStyle = "#443";
+      expCtx.font = "11px 'Noto Serif SC', serif";
+      expCtx.fillText("儒勒·凡尔纳《机器岛》官方航线图", VIRTUAL_WIDTH - 150, VIRTUAL_HEIGHT - 65);
+      expCtx.restore();
+
+      expCtx.restore();
+
+      const link = document.createElement('a');
+      link.download = "凡尔纳_L-Ile-a-helice_标准岛太平洋航行轨迹中文图.png";
+      link.href = exportCanvas.toDataURL('image/png');
+      link.click();
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      populateChaptersList();
+      populateGazetteer();
+    });
+  </script>
+</body>
+</html>
