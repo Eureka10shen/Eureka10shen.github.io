@@ -23,14 +23,6 @@ Doctoral research in computational quantum chemistry, combustion kinetics, and s
 ### ByteDance Seed AI for Science — Quantum Chemistry Team
 Research intern, 2025–present.
 
-## Publications
-
-Selected publications are listed on the [Publications](/publications/) page and reproduced below.
-
-<ul>{% for post in site.publications reversed %}
-  {% include archive-single-cv.html %}
-{% endfor %}</ul>
-
 ## Teaching
 
 - Teaching Assistant, *Engineering Thermodynamics and Heat Transfer A*, Beihang University, 2024.
