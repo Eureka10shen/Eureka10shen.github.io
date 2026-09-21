@@ -11,6 +11,6 @@ I am **Shen Fang**, a Ph.D. candidate in Aerospace Propulsion Theory and Enginee
 
 My current research includes neural quantum states for *ab initio* electronic-structure calculations, data-driven reduction of chemical reaction mechanisms, and physics-informed methods for scientific field reconstruction. I also study combustion processes involving metal particles.
 
-Since 2025, I have been a research intern with the Quantum Chemistry Team at ByteDance Seed AI for Science. I expect to complete my doctoral studies in June 2027.
+Since 2025, I have been a research intern with the Quantum Team at ByteDance Seed AI for Science. I expect to complete my doctoral studies in June 2027.
 
 Further details are available on the [Research](/research/), [Publications](/publications/), and [Curriculum Vitae](/cv/) pages.

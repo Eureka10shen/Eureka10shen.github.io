@@ -20,7 +20,7 @@ redirect_from:
 ### Beihang University
 Doctoral research in computational quantum chemistry, combustion kinetics, and scientific machine learning. Current work includes neural quantum states, sparse reduction of chemical reaction mechanisms, physics-informed field reconstruction, and metal-particle combustion.
 
-### ByteDance Seed AI for Science — Quantum Chemistry Team
+### ByteDance Seed AI for Science — Quantum Team
 Research intern, 2025–present.
 
 ## Teaching
@@ -37,11 +37,11 @@ Research intern, 2025–present.
 
 ## Selected honors
 
-- First Prize, National Zhou Peiyuan College Mechanics Competition, 2021.
-- First Prize, National College Mathematics Competition, 2020.
-- First Prize, Anhui Division of the National High School Physics Competition, 2017.
-- First Prize, Beihang University Graduate Academic Scholarship, 2025.
-- Beihang University Doctoral Freshman Academic Scholarship, 2023.
+- First Prize, National Zhou Peiyuan Mechanics Competition, 2021.
+- First Prize, Chinese Mathematics Competitions for College Students (CMC), 2020.
+- Provincial First Prize, Chinese Physics Olympiad (Anhui Division), 2017.
+- First-Class Postgraduate Academic Scholarship, Beihang University, 2025.
+- Doctoral Entrance Scholarship, Beihang University, 2023.
 
 ## Service and activities
 
