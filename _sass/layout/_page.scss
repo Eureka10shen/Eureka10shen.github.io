@@ -5,6 +5,7 @@
 #main {
   @include container;
   @include clearfix;
+  position: relative;
   margin-top: 2em;
   padding-left: 1em;
   padding-right: 1em;
@@ -14,6 +15,83 @@
   @include breakpoint($x-large) {
     max-width: $x-large;
   }
+}
+
+.post-toc {
+  display: none;
+
+  @include breakpoint($large) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    width: 16%;
+
+    &[hidden] {
+      display: none;
+    }
+
+    nav {
+      position: sticky;
+      top: 2em;
+      max-height: calc(100vh - 4em);
+      overflow-y: auto;
+      padding-left: 1.25em;
+    }
+  }
+}
+
+.post-toc__title {
+  margin: 0 0 0.75rem;
+  color: var(--global-text-color);
+  font-family: $sans-serif;
+  font-size: $type-size-6;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.post-toc__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    display: block;
+    padding: 0.3rem 0;
+    color: var(--global-text-color-light);
+    font-family: $sans-serif;
+    font-size: $type-size-7;
+    line-height: 1.35;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: var(--global-link-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+.post-toc__item--h3 a {
+  padding-left: 0.75rem;
+}
+
+.post-toc__item--h2 a {
+  color: var(--global-link-color);
+  font-size: $type-size-6;
+  font-weight: 700;
+}
+
+.post-toc__item--h3 a {
+  color: var(--global-text-color);
+  font-size: $type-size-7;
+  font-weight: normal;
 }
 
 .page {

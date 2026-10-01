@@ -97,6 +97,33 @@ function redrawPlotly() {
   });
 }
 
+function initPostToc() {
+  const toc = document.querySelector("[data-post-toc]");
+  const list = document.querySelector("[data-post-toc-list]");
+
+  if (!toc || !list) {
+    return;
+  }
+
+  const headings = document.querySelectorAll(".page__content h2[id], .page__content h3[id]");
+  if (headings.length === 0) {
+    return;
+  }
+
+  headings.forEach(function (heading) {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+
+    item.className = "post-toc__item post-toc__item--" + heading.tagName.toLowerCase();
+    link.href = "#" + encodeURIComponent(heading.id);
+    link.textContent = heading.textContent;
+    item.appendChild(link);
+    list.appendChild(item);
+  });
+
+  toc.hidden = false;
+}
+
 /* ==========================================================================
    Actions that should occur when the page has been fully loaded
    ========================================================================== */
@@ -105,6 +132,8 @@ $(document).ready(function () {
   // SCSS SETTINGS - These should be the same as the settings in the relevant files
   const scssLarge = 925;          // pixels, from /_sass/_themes.scss
   const scssMastheadHeight = 70;  // pixels, from the current theme (e.g., /_sass/theme/_default.scss)
+
+  initPostToc();
 
   // Follow menu drop down
   $(".author__urls-wrapper button").on("click", function () {
