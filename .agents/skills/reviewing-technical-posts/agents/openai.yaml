@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Technical Posts"
+  short_description: "Review mathematical posts before editing"
+  default_prompt: "Use $reviewing-technical-posts to review a post in _posts and propose improvements before making edits."
